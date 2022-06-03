@@ -1,20 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"kvStore/gee"
 	"net/http"
 )
 
 func main() {
 	r := gee.New()
-	r.GET("/", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprintf(writer, "URL.Path = %q\n", request.URL.Path)
+	r.GET("/", func(c *gee.Context) {
+		c.HTML(http.StatusOK, "<h1>yexiaoyu's golang template</h1>")
 	})
-	r.GET("/hello", func(w http.ResponseWriter, req *http.Request) {
-		for k, v := range req.Header {
-			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
-		}
+	r.GET("/hello", func(c *gee.Context) {
+		// expect /hello?name=yexiaoyu
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
+	})
+	r.POST("/login", func(c *gee.Context) {
+		c.JSON(http.StatusOK, gee.Cont{
+			"username": c.PostForm("username"),
+			"password": c.PostForm("password"),
+		})
 	})
 	r.Run(":9999")
 }
