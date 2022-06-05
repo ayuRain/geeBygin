@@ -15,6 +15,7 @@ type Context struct {
 	//Request info
 	Path   string
 	Method string
+	Params map[string]string
 	//Rsp info
 	StatusCode int
 }
@@ -26,6 +27,11 @@ func newContext(rsp http.ResponseWriter, req *http.Request) *Context {
 		Path:   req.URL.Path,
 		Method: req.Method,
 	}
+}
+
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 func (c *Context) SetStatusCode(code int) {
